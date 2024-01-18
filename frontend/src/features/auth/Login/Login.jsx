@@ -134,6 +134,8 @@ const Login = () => {
             >
               sign in
             </Button>
+
+            <a href="http://127.0.0.1:8000/login-google">login with google</a>
           </Form>
         )}
       </div>

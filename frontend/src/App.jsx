@@ -7,6 +7,7 @@ import Register, {
 import { useDispatch } from "react-redux";
 import store from "./app/store";
 import Login, { action as loginAction } from "./features/auth/Login/Login";
+import GoogleCallBack from "./features/auth/googleCallBack/GoogleCallBack";
 
 function App() {
   const dispatch = useDispatch();
@@ -24,6 +25,10 @@ function App() {
       path: "/login",
       element: <Login />,
       action: loginAction(dispatch),
+    },
+    {
+      path: "/auth/google/callback",
+      element: <GoogleCallBack />,
     },
   ]);
   return <RouterProvider router={router} />;
