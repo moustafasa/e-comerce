@@ -1,0 +1,39 @@
+@use "../../scss/variables/others" as *;
+@use "../../scss/helpers/mixins" as *;
+
+.dashboard {
+  .top-bar {
+    height: $nav-height;
+  }
+
+  .side-bar {
+    width: side-bar-width();
+    transition: 0.5s;
+    @include medias("mobile") {
+      position: fixed;
+      left: -100vw;
+      top: $nav-height;
+      height: calc(100% - $nav-height);
+      z-index: 1000;
+    }
+  }
+
+  @include medias("more mobile") {
+    &.shrink {
+      .side-bar {
+        width: side-bar-width(true);
+        span.link-text {
+          display: none;
+        }
+      }
+    }
+  }
+
+  @include medias("mobile") {
+    &.shrink {
+      .side-bar {
+        left: 0;
+      }
+    }
+  }
+}

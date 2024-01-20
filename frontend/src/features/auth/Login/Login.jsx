@@ -25,7 +25,7 @@ export const action =
 
       dispatch(setCredintials(crendentials));
 
-      return redirect("/");
+      return redirect("/dashboard");
     } catch (err) {
       console.log(err);
       if (!err.status) {

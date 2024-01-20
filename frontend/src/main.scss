@@ -3,5 +3,9 @@
 @import "bootstrap/scss/bootstrap";
 
 body {
-  font-family: "Lato", sans-serif;
+  font-family: "Lato", sans-serif !important;
+}
+
+.nav-link.active:hover {
+  color: inherit;
 }

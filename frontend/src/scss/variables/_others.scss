@@ -1,0 +1,9 @@
+@function side-bar-width($shrink: false) {
+  @if ($shrink) {
+    @return 70px;
+  } @else {
+    @return 230px;
+  }
+}
+
+$nav-height: 60px;

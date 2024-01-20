@@ -15,6 +15,9 @@ const authApiSlice = apiSlice.injectEndpoints({
     loginWithGoogle: builder.query({
       query: (search) => `/auth/google/callback${search}`,
     }),
+    verifyToken: builder.query({
+      query: () => `/user`,
+    }),
   }),
 });
 
