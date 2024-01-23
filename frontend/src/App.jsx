@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import {
-  Outlet,
   RouterProvider,
   createBrowserRouter,
   redirect,
@@ -10,10 +9,9 @@ import Register, {
   action as registerAction,
 } from "./features/auth/Register/Register";
 import { useDispatch } from "react-redux";
-import store from "./app/store";
 import Login, { action as loginAction } from "./features/auth/Login/Login";
 import GoogleCallBack from "./features/auth/googleCallBack/GoogleCallBack";
-import Dashboard from "./features/dashboard/dashboard";
+import Dashboard from "./features/dashboard/Dashboard";
 import authApiSlice from "./features/auth/authApiSlice";
 import { setUser } from "./features/auth/authSlice";
 import Cookies from "universal-cookie";
