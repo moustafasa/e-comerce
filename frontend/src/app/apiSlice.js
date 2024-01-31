@@ -11,6 +11,7 @@ import axios from "axios";
 const axiosBaseQuery = async (args, api, extra) => {
   const baseUrl = `http://127.0.0.1:8000/api`;
   const token = getToken(api.getState());
+  // console.log("api " + token);
   const defaultHeaders = {
     "Content-Type": "application/json",
   };
@@ -28,7 +29,7 @@ const axiosBaseQuery = async (args, api, extra) => {
     res = await axios({
       ...options,
       headers: options?.headers
-        ? { ...options.headers, ...defaultHeaders }
+        ? { ...defaultHeaders, ...options.headers }
         : defaultHeaders,
     });
     return {
@@ -75,7 +76,7 @@ const baseQueryReauth = async (args, api, extra) => {
 
 export const apiSlice = createApi({
   baseQuery: baseQueryReauth,
-  tagTypes: ["Users"],
+  tagTypes: ["Users", "Cats"],
   endpoints: (builder) => ({}),
   keepUnusedDataFor: 0,
 });

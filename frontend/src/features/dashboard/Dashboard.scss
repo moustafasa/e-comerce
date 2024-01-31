@@ -9,6 +9,7 @@
   .side-bar {
     width: side-bar-width();
     transition: 0.5s;
+    text-wrap: nowrap;
     @include medias("mobile") {
       position: fixed;
       left: -100vw;

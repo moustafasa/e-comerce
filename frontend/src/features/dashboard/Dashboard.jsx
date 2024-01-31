@@ -5,7 +5,6 @@ import "./Dashboard.scss";
 import { useSelector } from "react-redux";
 import { getShrink } from "./dashboardSlice";
 import classNames from "classnames";
-import { Col } from "react-bootstrap";
 
 const Dashboard = () => {
   const shrink = useSelector(getShrink);
@@ -19,7 +18,7 @@ const Dashboard = () => {
       <TopBar />
       <div className="d-flex flex-grow-1 w-100">
         <SideBar />
-        <div className="p-3">
+        <div className="p-3 flex-grow-1 w-100">
           <Outlet />
         </div>
       </div>

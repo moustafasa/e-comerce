@@ -7,7 +7,6 @@ import {
   useNavigation,
 } from "react-router-dom";
 import { setCredintials } from "../authSlice";
-import { apiSlice } from "../../../app/apiSlice";
 import { useState } from "react";
 import { FaCircleInfo } from "react-icons/fa6";
 import authApiSlice from "../authApiSlice";
@@ -17,17 +16,22 @@ export const action =
   async ({ request }) => {
     const formData = await request.formData();
     const data = Object.fromEntries(formData);
-
     try {
       const crendentials = await dispatch(
         authApiSlice.endpoints.login.initiate(data, { track: false })
       ).unwrap();
 
-      dispatch(setCredintials(crendentials));
+      await dispatch(setCredintials(crendentials));
 
-      return redirect("/dashboard");
+      const role = crendentials.user.role;
+      const to =
+        role === "1995"
+          ? "/dashboard/users"
+          : role === "1996"
+          ? "/dashboard/writer"
+          : "/dashboard/categories";
+      return redirect(to);
     } catch (err) {
-      console.log(err);
       if (!err.status) {
         return "network err";
       } else if (err.status === 422) {

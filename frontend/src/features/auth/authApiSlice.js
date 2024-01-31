@@ -15,12 +15,15 @@ const authApiSlice = apiSlice.injectEndpoints({
     loginWithGoogle: builder.query({
       query: (search) => `/auth/google/callback${search}`,
     }),
-    verifyToken: builder.query({
+    getCurrentUser: builder.query({
       query: () => `/user`,
+    }),
+    logOut: builder.mutation({
+      query: () => "/logout",
     }),
   }),
 });
 
 export default authApiSlice;
 
-export const { useLoginWithGoogleQuery } = authApiSlice;
+export const { useLoginWithGoogleQuery, useGetCurrentUserQuery } = authApiSlice;

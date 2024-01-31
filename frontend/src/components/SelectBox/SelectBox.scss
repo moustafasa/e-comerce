@@ -1,0 +1,77 @@
+@use "../../scss/helpers/mixins" as *;
+@use "../../scss/variables/colors" as *;
+@use "../../scss/variables/others" as *;
+
+.select-box {
+  width: 100%;
+  position: relative;
+  &:has(.options li.disabled):not(&:has(.options li.active)) {
+    select {
+      color: $secondary !important;
+    }
+  }
+  .overlay {
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+    .drop-down-icon {
+      @include position(null, absolute, null, null, $left: 5px, $top: 50%);
+      translate: 0 -50%;
+      color: $secondary;
+    }
+    select {
+      width: 100%;
+      background-color: $dark;
+      text-transform: capitalize;
+      padding: 10px 20px 10px 25px;
+      border: 1px solid $input-border-color;
+      border-radius: 5px;
+      outline: none;
+      appearance: none;
+      pointer-events: none;
+      color: inherit;
+      option {
+        display: none;
+      }
+    }
+  }
+  .options {
+    @include flex-gap(2px);
+    border: 1px solid $input-border-color;
+    @include position(
+      #212529,
+      absolute,
+      100%,
+      null,
+      $right: 0,
+      $top: calc(100% + 10px)
+    );
+    max-height: 300px;
+    padding: 10px;
+    border-radius: 5px;
+    overflow-y: auto;
+    z-index: 10000;
+    li {
+      cursor: pointer;
+      transition: 0.5s;
+      padding: 10px;
+      &.disabled {
+        padding-block: 5px;
+        pointer-events: none;
+        color: $secondary;
+      }
+      &:hover,
+      &.active {
+        &:not(.disabled) {
+          background-color: $secondary;
+          padding-right: 10px;
+          border-radius: 5px;
+          color: $dark;
+        }
+      }
+    }
+    &.hidden {
+      display: none;
+    }
+  }
+}
