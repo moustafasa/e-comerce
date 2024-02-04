@@ -9,7 +9,7 @@ export const catApiSlice = apiSlice.injectEndpoints({
         ...result.map((cat) => ({ type: "Cats", id: cat.id })),
       ],
     }),
-    getCategory: builder.mutation({
+    getCategory: builder.query({
       query: (id) => `/category/${id}`,
     }),
     addCategory: builder.mutation({
@@ -17,9 +17,6 @@ export const catApiSlice = apiSlice.injectEndpoints({
         url: "/category/add",
         method: "post",
         data,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
       }),
     }),
     editCategory: builder.mutation({
@@ -27,9 +24,6 @@ export const catApiSlice = apiSlice.injectEndpoints({
         url: `/category/edit/${id}`,
         method: "post",
         data,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
       }),
       invalidatesTags: (result, err, args) => [{ type: "Cats", id: args.id }],
     }),
@@ -60,4 +54,4 @@ export const catApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetCategoriesQuery } = catApiSlice;
+export const { useGetCategoriesQuery, useGetCategoryQuery } = catApiSlice;

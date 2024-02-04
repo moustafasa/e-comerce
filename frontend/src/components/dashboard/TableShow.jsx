@@ -69,7 +69,7 @@ const TableShow = ({ loading, data = [], headers, deletePage }) => {
             </tr>
           ) : data.length === 0 ? (
             <tr>
-              <td colSpan={12}>no users found</td>
+              <td colSpan={12}>no {deletePage} found</td>
             </tr>
           ) : (
             showUser

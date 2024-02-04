@@ -36,6 +36,14 @@ import EditCategory, {
   action as editCatAction,
   loader as editCatLoader,
 } from "./features/dashboard/categories/EditCategory";
+import Products from "./features/dashboard/products/Products";
+import AddProduct, {
+  action as addProductAction,
+} from "./features/dashboard/products/AddProduct";
+import EditProduct, {
+  action as editProductAction,
+  loader as editProductLoader,
+} from "./features/dashboard/products/EditProduct";
 
 const protectedLoader = (dispatch, allowedRoles) => async () => {
   const cookie = new Cookies();
@@ -162,6 +170,21 @@ function App() {
                       element: <EditCategory />,
                       loader: editCatLoader(dispatch),
                       action: editCatAction(dispatch),
+                    },
+                    {
+                      path: "products",
+                      element: <Products />,
+                    },
+                    {
+                      path: "product/add",
+                      element: <AddProduct />,
+                      action: addProductAction(dispatch),
+                    },
+                    {
+                      path: "products/edit/:id",
+                      action: editProductAction(dispatch),
+                      loader: editProductLoader(dispatch),
+                      element: <EditProduct />,
                     },
                   ],
                 },

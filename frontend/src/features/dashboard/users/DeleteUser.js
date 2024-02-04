@@ -9,7 +9,9 @@ export const action =
     const endpoint =
       page === "users"
         ? "deleteUser"
-        : page === "categories" && "deleteCategory";
+        : page === "categories"
+        ? "deleteCategory"
+        : page === "products" && "deleteProduct";
 
     try {
       await dispatch(

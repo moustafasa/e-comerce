@@ -1,8 +1,12 @@
 import { Nav } from "react-bootstrap";
 import { FaUsers, FaPlus } from "react-icons/fa";
+import { FaProductHunt } from "react-icons/fa6";
 import { BiSolidCategory } from "react-icons/bi";
 import { NavLink } from "react-router-dom";
 import { useGetCurrentUserQuery } from "../../features/auth/authApiSlice";
+import { TfiWrite } from "react-icons/tfi";
+import { RiUserAddFill } from "react-icons/ri";
+import { AiOutlineAppstoreAdd } from "react-icons/ai";
 
 const SideBar = () => {
   const { role } = useGetCurrentUserQuery(undefined, {
@@ -14,15 +18,10 @@ const SideBar = () => {
     {
       path: "user/add",
       title: "add user",
-      Icon: FaPlus,
+      Icon: RiUserAddFill,
       allowedRoles: ["1995"],
     },
-    {
-      path: "writer",
-      title: "writer",
-      Icon: FaPlus,
-      allowedRoles: ["1995", "1996"],
-    },
+
     {
       path: "categories",
       title: "categories",
@@ -32,8 +31,26 @@ const SideBar = () => {
     {
       path: "category/add",
       title: "add category",
-      Icon: FaPlus,
+      Icon: AiOutlineAppstoreAdd,
       allowedRoles: ["1995", "1999"],
+    },
+    {
+      path: "products",
+      title: "products",
+      Icon: FaProductHunt,
+      allowedRoles: ["1999", "1995"],
+    },
+    {
+      path: "product/add",
+      title: "add product",
+      Icon: FaPlus,
+      allowedRoles: ["1999", "1995"],
+    },
+    {
+      path: "writer",
+      title: "writer",
+      Icon: TfiWrite,
+      allowedRoles: ["1995", "1996"],
     },
   ];
 

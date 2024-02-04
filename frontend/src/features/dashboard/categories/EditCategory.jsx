@@ -16,11 +16,14 @@ export const loader =
   async ({ params }) => {
     const { id } = params;
     try {
-      const cat = await dispatch(
-        catApiSlice.endpoints.getCategory.initiate(id, { track: false })
-      ).unwrap();
+      const { unwrap, unsubscribe } = dispatch(
+        catApiSlice.endpoints.getCategory.initiate(id)
+      );
+      const cat = await unwrap();
+      await unsubscribe();
       return { cat };
     } catch (err) {
+      console.log(err);
       throw json(undefined, { status: 404 });
     }
   };

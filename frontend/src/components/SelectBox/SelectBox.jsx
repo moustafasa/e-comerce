@@ -17,6 +17,7 @@ const SelectBox = ({
   className,
   valueState: [selectValue, setSelectValue],
   name,
+  disabled,
 }) => {
   const [optOpenClass, setOptOpenClass] = useState(false);
   const optionsClass = classNames("options", { hidden: !optOpenClass });
@@ -41,7 +42,12 @@ const SelectBox = ({
   }, []);
   return (
     <div className={`select-box ${className}`}>
-      <div className="overlay" onClick={openOptions} role="select">
+      <div
+        className="overlay"
+        onClick={openOptions}
+        role="select"
+        style={{ pointerEvents: disabled && "none" }}
+      >
         {optOpenClass ? (
           <FaCaretUp className="drop-down-icon" />
         ) : (

@@ -11,10 +11,7 @@ import axios from "axios";
 const axiosBaseQuery = async (args, api, extra) => {
   const baseUrl = `http://127.0.0.1:8000/api`;
   const token = getToken(api.getState());
-  // console.log("api " + token);
-  const defaultHeaders = {
-    "Content-Type": "application/json",
-  };
+  const defaultHeaders = {};
   if (token) defaultHeaders["Authorization"] = `Bearer ${token}`;
 
   try {
