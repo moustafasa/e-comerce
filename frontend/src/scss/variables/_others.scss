@@ -1,6 +1,6 @@
 @function side-bar-width($shrink: false) {
   @if ($shrink) {
-    @return 70px;
+    @return 50px;
   } @else {
     @return 230px;
   }

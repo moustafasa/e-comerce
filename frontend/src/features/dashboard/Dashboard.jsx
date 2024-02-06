@@ -9,10 +9,11 @@ import classNames from "classnames";
 const Dashboard = () => {
   const shrink = useSelector(getShrink);
   const shrinkClass = classNames({ shrink });
+  console.log(shrink);
   return (
     <div
       className={
-        "min-vw-100 min-vh-100 dashboard d-flex flex-column " + shrinkClass
+        "min-vh-100 d-flex flex-column dashboard overflow-hidden " + shrinkClass
       }
     >
       <TopBar />

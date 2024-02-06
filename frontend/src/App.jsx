@@ -48,7 +48,6 @@ import EditProduct, {
 const protectedLoader = (dispatch, allowedRoles) => async () => {
   const cookie = new Cookies();
   if (cookie.get("Bearer")) {
-    let user;
     try {
       const { unsubscribe, unwrap } = dispatch(
         authApiSlice.endpoints.getCurrentUser.initiate(undefined)

@@ -89,28 +89,29 @@ const AddProduct = () => {
   const changeFileHandler = async (e) => {
     const uploadedImages = [...e.target.files];
     setImages((prev) => [...prev, ...uploadedImages]);
-    try {
-      const formData = new FormData();
-      uploadedImages.forEach(async (img, ind) => {
-        formData.append("image", img);
-        console.log(id);
-        formData.append("product_id", id);
-        const onUploadProgress = ({ loaded, total }) => {
-          const progValue = Math.floor((loaded * 100) / total);
-          const progressBar = progRef.current[images.length + ind].children[0];
-          progressBar.style.width = `${progValue}%`;
-          progressBar.setAttribute("aria-valuenow", progValue);
-          progressBar.innerText = `${progValue}%`;
-        };
+    const formData = new FormData();
+    for (let i = 0; i < uploadedImages.length; i++) {
+      const img = uploadedImages[i];
+      formData.append("image", img);
+      formData.append("product_id", id);
+      const onUploadProgress = ({ loaded, total }) => {
+        const progValue = Math.floor((loaded * 100) / total);
+        const progressBar = progRef.current[images.length + i].children[0];
+        progressBar.style.width = `${progValue}%`;
+        progressBar.setAttribute("aria-valuenow", progValue);
+        progressBar.innerText = `${progValue}%`;
+      };
+
+      try {
         const res = await addImage({
           data: formData,
           onUploadProgress,
         }).unwrap();
 
-        imagesIdsRef.current[images.length + ind] = res.id;
-      });
-    } catch (err) {
-      console.log(err);
+        imagesIdsRef.current[images.length + i] = res.id;
+      } catch (err) {
+        console.log(err);
+      }
     }
   };
 
@@ -169,163 +170,159 @@ const AddProduct = () => {
   ));
 
   return (
-    <Container>
-      <div className="mt-5">
-        {navigation.state !== "idle" ? (
-          <p>loading...</p>
-        ) : (
-          <Form
-            className="border p-3 rounded mx-auto"
-            style={{ maxWidth: "700px" }}
-            as={RouteForm}
-            method="post"
-            replace
-            encType="multipart/form-data"
-            action={`../../products/edit/${id}`}
-            relative="path"
+    <div className="mt-5">
+      {navigation.state !== "idle" ? (
+        <p>loading...</p>
+      ) : (
+        <Form
+          className="border p-3 rounded mx-auto"
+          style={{ maxWidth: "700px" }}
+          as={RouteForm}
+          method="post"
+          replace
+          encType="multipart/form-data"
+          action={`../../products/edit/${id}`}
+          relative="path"
+        >
+          <h2 className="text-center mb-4 text-capitalize">add product</h2>
+          <SelectBox
+            className="text-capitalize mb-3"
+            valueState={[
+              form.category,
+              (value) => changeHandler({ key: "category", value }),
+            ]}
+            options={categories}
+            name="category"
+          />
+
+          <FloatingLabel
+            controlId="title"
+            label="title"
+            className="mb-3 text-capitalize text-secondary"
           >
-            <h2 className="text-center mb-4 text-capitalize">add product</h2>
-            <SelectBox
-              className="text-capitalize mb-3"
-              valueState={[
-                form.category,
-                (value) => changeHandler({ key: "category", value }),
-              ]}
-              options={categories}
-              name="category"
-            />
-
-            <FloatingLabel
-              controlId="title"
-              label="title"
-              className="mb-3 text-capitalize text-secondary"
-            >
-              <Form.Control
-                name="title"
-                type="text"
-                placeholder="write your fullname"
-                autoComplete="off"
-                value={form.title}
-                onChange={changeHandler}
-                className="mw-100"
-                required
-                disabled={!id}
-              />
-            </FloatingLabel>
-            <FloatingLabel
-              controlId="description"
-              label="description"
-              className="mb-3 text-capitalize text-secondary"
-            >
-              <Form.Control
-                name="description"
-                type="text"
-                placeholder="write your fullname"
-                autoComplete="off"
-                value={form.description}
-                onChange={changeHandler}
-                className="mw-100"
-                required
-                disabled={!id}
-              />
-            </FloatingLabel>
-            <FloatingLabel
-              controlId="price"
-              label="price"
-              className="mb-3 text-capitalize text-secondary"
-            >
-              <Form.Control
-                name="price"
-                type="text"
-                placeholder="write your fullname"
-                autoComplete="off"
-                value={form.price}
-                onChange={changeHandler}
-                className="mw-100"
-                required
-                disabled={!id}
-              />
-            </FloatingLabel>
-            <FloatingLabel
-              controlId="discount"
-              label="discount"
-              className="mb-3 text-capitalize text-secondary"
-            >
-              <Form.Control
-                name="discount"
-                type="text"
-                placeholder="write your fullname"
-                autoComplete="off"
-                value={form.discount}
-                onChange={changeHandler}
-                className="mw-100"
-                required
-                disabled={!id}
-              />
-            </FloatingLabel>
-            <FloatingLabel
-              controlId="About"
-              label="About"
-              className="mb-3 text-capitalize text-secondary"
-            >
-              <Form.Control
-                name="About"
-                type="text"
-                placeholder="write your fullname"
-                autoComplete="off"
-                value={form.About}
-                onChange={changeHandler}
-                className="mw-100"
-                required
-                disabled={!id}
-              />
-            </FloatingLabel>
-            <div
-              style={{
-                cursor: "pointer",
-                border: form.category
-                  ? "1px dashed #1B8ADB"
-                  : "1px dashed gray",
-                filter: !form.category && "grayScale(1)",
-                pointerEvents: !form.category && "none",
-              }}
-              className="my-4 p-4 rounded d-flex flex-column justify-content-center align-items-center  gap-3"
-              onClick={() => {
-                imagesRef.current.click();
-              }}
-              aria-disabled={!id}
-            >
-              <div className="bg-light rounded-circle">
-                <img src={uploadImage} alt="ubload" width={"150px"} />
-              </div>
-              <p
-                className="text-capitalize fw-bold fs-5 m-0"
-                style={{ color: "#1B8ADB" }}
-              >
-                upload images
-              </p>
-            </div>
             <Form.Control
-              type="file"
-              onChange={changeFileHandler}
-              multiple
+              name="title"
+              type="text"
+              placeholder="write your fullname"
+              autoComplete="off"
+              value={form.title}
+              onChange={changeHandler}
               className="mw-100"
-              hidden
-              ref={imagesRef}
+              required
+              disabled={!id}
             />
-            <div className="d-flex flex-column gap-4">{showImages}</div>
-
-            <Button
-              className="d-block mx-auto text-capitalize mt-3"
-              disabled={!checkValidate || navigation.state !== "idle"}
-              type="submit"
+          </FloatingLabel>
+          <FloatingLabel
+            controlId="description"
+            label="description"
+            className="mb-3 text-capitalize text-secondary"
+          >
+            <Form.Control
+              name="description"
+              type="text"
+              placeholder="write your fullname"
+              autoComplete="off"
+              value={form.description}
+              onChange={changeHandler}
+              className="mw-100"
+              required
+              disabled={!id}
+            />
+          </FloatingLabel>
+          <FloatingLabel
+            controlId="price"
+            label="price"
+            className="mb-3 text-capitalize text-secondary"
+          >
+            <Form.Control
+              name="price"
+              type="text"
+              placeholder="write your fullname"
+              autoComplete="off"
+              value={form.price}
+              onChange={changeHandler}
+              className="mw-100"
+              required
+              disabled={!id}
+            />
+          </FloatingLabel>
+          <FloatingLabel
+            controlId="discount"
+            label="discount"
+            className="mb-3 text-capitalize text-secondary"
+          >
+            <Form.Control
+              name="discount"
+              type="text"
+              placeholder="write your fullname"
+              autoComplete="off"
+              value={form.discount}
+              onChange={changeHandler}
+              className="mw-100"
+              required
+              disabled={!id}
+            />
+          </FloatingLabel>
+          <FloatingLabel
+            controlId="About"
+            label="About"
+            className="mb-3 text-capitalize text-secondary"
+          >
+            <Form.Control
+              name="About"
+              type="text"
+              placeholder="write your fullname"
+              autoComplete="off"
+              value={form.About}
+              onChange={changeHandler}
+              className="mw-100"
+              required
+              disabled={!id}
+            />
+          </FloatingLabel>
+          <div
+            style={{
+              cursor: "pointer",
+              border: form.category ? "1px dashed #1B8ADB" : "1px dashed gray",
+              filter: !form.category && "grayScale(1)",
+              pointerEvents: !form.category && "none",
+            }}
+            className="my-4 p-4 rounded d-flex flex-column justify-content-center align-items-center  gap-3"
+            onClick={() => {
+              imagesRef.current.click();
+            }}
+            aria-disabled={!id}
+          >
+            <div className="bg-light rounded-circle">
+              <img src={uploadImage} alt="ubload" width={"150px"} />
+            </div>
+            <p
+              className="text-capitalize fw-bold fs-5 m-0"
+              style={{ color: "#1B8ADB" }}
             >
-              add
-            </Button>
-          </Form>
-        )}
-      </div>
-    </Container>
+              upload images
+            </p>
+          </div>
+          <Form.Control
+            type="file"
+            onChange={changeFileHandler}
+            multiple
+            className="mw-100"
+            hidden
+            ref={imagesRef}
+          />
+          <div className="d-flex flex-column gap-4">{showImages}</div>
+
+          <Button
+            className="d-block mx-auto text-capitalize mt-3"
+            disabled={!checkValidate || navigation.state !== "idle"}
+            type="submit"
+          >
+            add
+          </Button>
+        </Form>
+      )}
+    </div>
   );
 };
 

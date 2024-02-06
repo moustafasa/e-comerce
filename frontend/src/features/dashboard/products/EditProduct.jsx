@@ -1,5 +1,6 @@
 import {
   Form as RouteForm,
+  json,
   redirect,
   useFetcher,
   useLoaderData,
@@ -28,8 +29,19 @@ export const action =
   async ({ request, params }) => {
     const { id } = params;
     const formData = await request.formData();
-    const data = Object.fromEntries(formData);
+    const { deletedImgs, ...data } = Object.fromEntries(formData);
     try {
+      if (deletedImgs) {
+        JSON.parse(deletedImgs).forEach(async (id) => {
+          const res = await dispatch(
+            productApiSlice.endpoints.deleteImg.initiate(id, {
+              track: false,
+            })
+          ).unwrap();
+          console.log(res);
+        });
+      }
+
       await dispatch(
         productApiSlice.endpoints.editProduct.initiate(
           { data, id },
@@ -38,7 +50,6 @@ export const action =
       ).unwrap();
       return redirect("/dashboard/products");
     } catch (err) {
-      console.log(err);
       return err;
     }
   };
@@ -47,28 +58,28 @@ export const loader =
   (dispatch) =>
   async ({ params }) => {
     const { id } = params;
+    console.log("done");
     const { unsubscribe, unwrap } = dispatch(
-      productApiSlice.endpoints.getProduct.initiate(id)
+      productApiSlice.endpoints.getProduct.initiate(id, { subscribe: false })
     );
-    try {
-      const res = await unwrap();
-      return res[0];
-    } catch (err) {
-      console.log(err);
-    }
-    return null;
+
+    const res = await unwrap();
+    await unsubscribe();
+    if (res?.length > 0) return res[0];
+    else throw json(undefined, { status: 404 });
   };
 
 const EditProduct = () => {
-  const { serverImages, ...rest } = useLoaderData();
-
+  const { images: serverImages = [], ...rest } = useLoaderData();
   const [form, setForm] = useState(rest);
+  const [sImages, setSImages] = useState(serverImages);
   const [images, setImages] = useState([]);
   const checkValidate = Object.keys(form).every((key) => Boolean(form[key]));
   const navigation = useNavigation();
   const imagesRef = useRef();
   const progRef = useRef([]);
   const imagesIdsRef = useRef([]);
+  const deletedIds = useRef([]);
 
   const [addImage] = useAddImgMutation();
   const [deleteImg] = useDeleteImgMutation();
@@ -98,27 +109,28 @@ const EditProduct = () => {
   const changeFileHandler = async (e) => {
     const uploadedImages = [...e.target.files];
     setImages((prev) => [...prev, ...uploadedImages]);
-    try {
-      const formData = new FormData();
-      uploadedImages.forEach(async (img, ind) => {
-        formData.append("image", img);
-        formData.append("product_id", form.id);
-        const onUploadProgress = ({ loaded, total }) => {
-          const progValue = Math.floor((loaded * 100) / total);
-          const progressBar = progRef.current[images.length + ind].children[0];
-          progressBar.style.width = `${progValue}%`;
-          progressBar.setAttribute("aria-valuenow", progValue);
-          progressBar.innerText = `${progValue}%`;
-        };
+    const formData = new FormData();
+    for (let i = 0; i < uploadedImages.length; i++) {
+      const img = uploadedImages[i];
+      formData.append("product_id", form.id);
+      formData.append("image", img);
+      const onUploadProgress = ({ loaded, total, ...rest }) => {
+        console.log(rest);
+        const progValue = Math.floor((loaded * 100) / total);
+        const progressBar = progRef.current[images.length + i].children[0];
+        progressBar.style.width = `${progValue}%`;
+        progressBar.setAttribute("aria-valuenow", progValue);
+        progressBar.innerText = `${progValue}%`;
+      };
+      try {
         const res = await addImage({
           data: formData,
           onUploadProgress,
         }).unwrap();
-
-        imagesIdsRef.current[images.length + ind] = res.id;
-      });
-    } catch (err) {
-      console.log(err);
+        imagesIdsRef.current[images.length + i] = res.id;
+      } catch (err) {
+        console.log(err);
+      }
     }
   };
 
@@ -134,6 +146,36 @@ const EditProduct = () => {
       console.log(err);
     }
   };
+
+  const deleteServerImageHandler = async (id) => {
+    try {
+      setSImages((prev) => prev.filter((img) => img.id !== id));
+      deletedIds.current.push(id);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const showServerImages = sImages.map((img, ind) => (
+    <div key={img.id} className="position-relative">
+      <img src={img.image} style={{ maxWidth: "100%" }} />
+      <Button
+        variant="danger"
+        className="position-absolute d-flex justify-content-center align-items-center p-1 pb-2 "
+        style={{
+          top: "0",
+          left: "0",
+          translate: "-50% -50%",
+          width: "23px",
+          height: "23px",
+          cursor: "pointer",
+        }}
+        onClick={() => deleteServerImageHandler(img.id)}
+      >
+        X
+      </Button>
+    </div>
+  ));
 
   const showImages = images.map((image, ind) => (
     <div
@@ -314,14 +356,27 @@ const EditProduct = () => {
               hidden
               ref={imagesRef}
             />
-            <div className="d-flex flex-column gap-4">{showImages}</div>
+            <div
+              className="d-grid gap-3"
+              style={{
+                gridTemplateColumns: "repeat(auto-fit,minmax(80px,1fr))",
+              }}
+            >
+              {showServerImages}
+            </div>
+            <div className="d-flex flex-column gap-4 mt-4">{showImages}</div>
 
+            <input
+              type="hidden"
+              name="deletedImgs"
+              value={JSON.stringify(deletedIds.current)}
+            />
             <Button
               className="d-block mx-auto text-capitalize mt-3"
               disabled={!checkValidate || navigation.state !== "idle"}
               type="submit"
             >
-              add
+              save
             </Button>
           </Form>
         )}

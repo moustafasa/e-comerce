@@ -7,11 +7,24 @@ import { useGetCurrentUserQuery } from "../../features/auth/authApiSlice";
 import { TfiWrite } from "react-icons/tfi";
 import { RiUserAddFill } from "react-icons/ri";
 import { AiOutlineAppstoreAdd } from "react-icons/ai";
+import { createSelector } from "@reduxjs/toolkit";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  disableShrink,
+  toggleShrink,
+} from "../../features/dashboard/dashboardSlice";
 
 const SideBar = () => {
+  const getRoleSelector = createSelector(
+    [(data) => data?.role, (data, rest) => rest],
+    (role, rest) => ({ role, ...rest })
+  );
   const { role } = useGetCurrentUserQuery(undefined, {
-    selectFromResult: ({ data, ...rest }) => ({ role: data?.role, ...rest }),
+    selectFromResult: ({ data, ...rest }) => getRoleSelector(data, rest),
   });
+
+  const dispatch = useDispatch();
 
   const links = [
     { path: "users", title: "users", Icon: FaUsers, allowedRoles: ["1995"] },
@@ -54,10 +67,26 @@ const SideBar = () => {
     },
   ];
 
+  useEffect(() => {
+    const blurHandler = (e) => {
+      if (window.innerWidth < 767)
+        if (!e.target.closest(".side-bar") && !e.target.closest(".top-bar")) {
+          dispatch(disableShrink());
+        }
+    };
+    document.addEventListener("click", blurHandler);
+    return () => {
+      document.removeEventListener("click", blurHandler);
+    };
+  }, []);
+
   return (
     <Nav
       variant="pills"
-      className="side-bar border-end gap-3 flex-column pt-3 px-2 text-capitalize bg-dark"
+      className="side-bar border-end gap-3 flex-column pt-3 px-2 text-capitalize bg-dark flex-nowrap "
+      onSelect={() => {
+        if (window.innerWidth < 767) dispatch(toggleShrink());
+      }}
     >
       {links.map(
         (link) =>
@@ -66,6 +95,7 @@ const SideBar = () => {
               <Nav.Link
                 className="icon-link  w-100"
                 to={link.path}
+                eventKey={link.path}
                 as={NavLink}
               >
                 <link.Icon className="fs-4" />
