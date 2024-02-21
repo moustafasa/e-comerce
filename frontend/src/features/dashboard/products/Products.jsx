@@ -14,7 +14,6 @@ const Products = () => {
     { title: "rating" },
   ];
 
-  console.log(products);
   const data = products.map((product) => ({
     ...product,
     images: (
