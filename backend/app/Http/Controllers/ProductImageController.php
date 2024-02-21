@@ -33,7 +33,7 @@ class ProductImageController extends Controller
         $product = new ProductImage();
         if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $filename = date('YmdHis').str_replace('/','',$file) . '.' . $file->getClientOriginalExtension();
+            $filename = date('YmdHis'). str_rot13(str_replace('\\','',str_replace(':','',$file))) . '.' . $file->getClientOriginalExtension();
             $product->image = url('/') . '/images/' . $filename;
             $path = 'images';
             $file->move($path, $filename);
